@@ -15,7 +15,7 @@ export default function AdminDashboard() {
                     
                     {/* Footer */}
                     <div className="mt-5 text-center text-white-50 small">
-                         <p className="mb-0">© 2024 Cine Hall Analytics Dashboard. All rights reserved.</p>
+                         <p className="mb-0">© 2024 Cine Hall Analytics Dashboard. Hak cipta dilindungi undang-undang.</p>
                     </div>
                 </main>
             </div>

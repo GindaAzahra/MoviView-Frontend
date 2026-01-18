@@ -17,10 +17,10 @@ export default function ComingSoon() {
         <section className="container-xl py-5 mt-4">
             <div className="d-flex justify-content-between align-items-center mb-5 px-2">
                 <h2 className="h2 fw-bold text-white mb-0 text-uppercase" style={{ letterSpacing: '0.1em', fontWeight: 900 }}>
-                    Top Rated Movies
+                    Film Rating Tertinggi
                 </h2>
                 <Link to="/movies?type=top_rated" className="text-primary-custom text-decoration-none fw-bold d-flex align-items-center gap-1 small">
-                    View All <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>chevron_right</span>
+                    Lihat Semua <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>chevron_right</span>
                 </Link>
             </div>
 

@@ -45,8 +45,7 @@ export default function Navbar() {
 
                     {/* Nav Links (Desktop) */}
                     <div className="d-none d-md-flex align-items-center gap-4">
-                        <Link className="nav-link active" to="/">Home</Link>
-                        <Link className="nav-link" to="/movies">Movies</Link>
+                        <Link className="nav-link active" to="/">Beranda</Link>
                     </div>
                 </div>
 
@@ -57,14 +56,12 @@ export default function Navbar() {
                                 {user.name}
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end bg-dark border-secondary">
-                                <li><button className="dropdown-item text-white hover-primary" onClick={logout}>Logout</button></li>
-                            </ul>
-                            <ul className="dropdown-menu dropdown-menu-end bg-dark border-secondary">
-                                <li><button className="dropdown-item text-white hover-primary" >Profile</button></li>
+                                <li><Link to="/profile" className="dropdown-item text-white hover-primary">Profil</Link></li>
+                                <li><button className="dropdown-item text-white hover-primary" onClick={logout}>Keluar</button></li>
                             </ul>
                         </div>
                     ) : (
-                        <Link to="/login" className="btn btn-primary-custom rounded-3 px-4 py-2 text-sm">Login</Link>
+                        <Link to="/login" className="btn btn-primary-custom rounded-3 px-4 py-2 text-sm">Masuk</Link>
                     )}
                 </div>
             </div>

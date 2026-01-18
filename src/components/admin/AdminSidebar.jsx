@@ -46,7 +46,7 @@ export default function AdminSidebar() {
                 <li className="nav-item">
                     <Link to="/admin" className="nav-link active d-flex align-items-center gap-2" aria-current="page">
                         <span className="material-symbols-outlined">dashboard</span>
-                        Dashboard
+                        Dasbor
                     </Link>
                 </li>
               
@@ -55,12 +55,12 @@ export default function AdminSidebar() {
             <div className="dropdown">
                 <a href="#" className="d-flex align-items-center link-light text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2hFyg_KrBsJPElmfWpjBC3O3wYJtwvOtnURkuQKP7RCVqTaUcSczfBRhM2EHdyQURrnrP8D1jKaQInpuBVjRJ28hkoEUac3dGmSKrNUZ3sXMzyoqh18NRsscpSlsTAdR0CBJNGPtcVYeKxl_ucZNA8lkC7rN7_MH06afVTHYMCtjpMJVRkfAJKdaa88A6YC2NyoUmNYn63Vk-U2qFH9zies8EHGL7FPMqCqwGieW3_eUCFwZOPSCxm3XRgBAHa7ATaiWQViuWwTY" alt="" width="32" height="32" className="rounded-circle me-2" />
-                    <strong>John Doe</strong>
+                    <strong>{user?.name || 'Admin'}</strong>
                 </a>
                 <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser2">
                     <li><hr className="dropdown-divider" /></li>
                   
-                    <li><button className="dropdown-item text-white hover-primary" onClick={logout}>Logout</button></li>
+                    <li><button className="dropdown-item text-white hover-primary" onClick={logout}>Keluar</button></li>
                 </ul>
             </div>
         </aside>

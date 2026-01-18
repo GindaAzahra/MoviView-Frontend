@@ -99,9 +99,10 @@ export default function MovieGrid() {
                 <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-5 gap-3">
                     <div>
                         <h2 className="h2 fw-bold text-white mb-2 text-uppercase">
-                            {searchQuery ? `Search: ${searchQuery}` : type.replace('_', ' ')} Movies
+                            {searchQuery ? `Pencarian: ${searchQuery}` : 
+                             type === 'popular' ? 'Film Terpopuler' : 'Film Rating Tertinggi'}
                         </h2>
-                        <p className="text-muted-gray small">Discover the latest blockbusters and trending hits.</p>
+                        <p className="text-muted-gray small">Temukan film blockbuster terbaru dan hit yang sedang tren.</p>
                     </div>
 
                     <div className="d-flex flex-column flex-md-row gap-3">
@@ -111,26 +112,12 @@ export default function MovieGrid() {
                             <input 
                                 type="text" 
                                 className="form-control search-input ps-5 rounded-pill bg-card-dark text-white border-white border-opacity-10" 
-                                placeholder="Search movies..." 
+                                placeholder="Cari film..." 
                                 value={searchQuery}
                                 onChange={handleSearch}
                             />
                         </div>
 
-                        <div className="d-flex gap-2">
-                            <button 
-                                onClick={() => handleTypeChange("popular")}
-                                className={`btn rounded-pill px-4 py-2 small fw-bold ${type === 'popular' && !searchQuery ? 'btn-primary-custom text-dark' : 'btn-outline-light bg-card-dark border-opacity-10'}`}
-                            >
-                                Popular
-                            </button>
-                            <button 
-                                onClick={() => handleTypeChange("top_rated")}
-                                className={`btn rounded-pill px-4 py-2 small fw-bold ${type === 'top_rated' && !searchQuery ? 'btn-primary-custom text-dark' : 'btn-outline-light bg-card-dark border-opacity-10'}`}
-                            >
-                                Top Rated
-                            </button>
-                        </div>
                     </div>
                 </div>
 
@@ -138,7 +125,7 @@ export default function MovieGrid() {
                 {loading ? (
                     <div className="d-flex justify-content-center py-5">
                         <div className="spinner-border text-primary-custom" role="status">
-                            <span className="visually-hidden">Loading...</span>
+                            <span className="visually-hidden">Memuat...</span>
                         </div>
                     </div>
                 ) : (
@@ -172,7 +159,7 @@ export default function MovieGrid() {
                             </div>
                         )) : (
                             <div className="col-12 text-center py-5">
-                                <p className="text-muted-gray">No movies found.</p>
+                                <p className="text-muted-gray">Film tidak ditemukan.</p>
                             </div>
                         )}
                     </div>
@@ -188,7 +175,7 @@ export default function MovieGrid() {
                                 style={{ letterSpacing: '1px' }}
                             >
                                 <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_back</span>
-                                Previous
+                                Sebelumnya
                             </button>
                             
                             <div className="d-flex align-items-center gap-1 px-3">
@@ -210,11 +197,11 @@ export default function MovieGrid() {
                                 className="btn btn-outline-primary-custom rounded-pill px-4 py-2 d-flex align-items-center gap-2 small fw-bold text-uppercase" 
                                 style={{ letterSpacing: '1px' }}
                             >
-                                Next
+                                Selanjutnya
                                 <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
                             </button>
                         </div>
-                        <p className="text-muted-gray small fw-medium">Page {currentPage} of {totalPages}</p>
+                        <p className="text-muted-gray small fw-medium">Halaman {currentPage} dari {totalPages}</p>
                     </div>
                 )}
 

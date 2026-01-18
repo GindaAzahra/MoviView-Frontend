@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import MovieDetail from './pages/MovieDetail';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import MovieGrid from './pages/grid/MovieGrid';
+import Profile from './pages/Profile';
 import './assets/App.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/movie/:id" element={<MovieDetail />} />
         <Route path="/movies" element={<MovieGrid />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </>
   );

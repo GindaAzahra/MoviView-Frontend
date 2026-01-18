@@ -187,6 +187,21 @@ async function deleteReview(id) {
   return { error: false, data: responseJson.data };
 }
 
+async function getMyReviews() {
+  const response = await fetch(`${BASE_URL}/my-reviews`, {
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+  });
+  const responseJson = await response.json();
+  
+  if (responseJson.status !== "success") {
+    return { error: true, data: [] };
+  }
+  
+  return { error: false, data: responseJson.data };
+}
+
 async function searchMovies(query) {
   const response = await fetch(`${BASE_URL}/movies/search?q=${query}`);
   const responseJson = await response.json();
@@ -211,5 +226,6 @@ export {
  getReviewsByMovieId,
  updateReview,
  deleteReview,
- searchMovies
+ searchMovies,
+ getMyReviews
 }

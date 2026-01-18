@@ -4,7 +4,7 @@ export default function AdminNavbar() {
             <div className="container-fluid p-0">
                 <div className="d-flex w-100 justify-content-between align-items-center">
                     <div className="d-flex align-items-center flex-grow-1 gap-4">
-                        <h4 className="mb-0 fw-bold text-white">Admin Dashboard</h4>
+                        <h4 className="mb-0 fw-bold text-white">Dasbor Admin</h4>
                      
                     </div>
 

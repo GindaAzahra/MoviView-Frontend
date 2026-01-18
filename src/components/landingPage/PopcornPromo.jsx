@@ -9,15 +9,15 @@ export default function PopcornPromo() {
                 </div>
 
                 <h2 className="display-4 fw-black text-white mb-4 text-uppercase fw-bold" style={{ letterSpacing: '-2px' }}>
-                    Fresh Reviews, <br /><span className="text-primary-custom fst-italic">Hotter than the Popcorn.</span>
+                    Ulasan Segar, <br /><span className="text-primary-custom fst-italic">Lebih Hangat dari Popcorn.</span>
                 </h2>
 
                 <p className="text-white-50 lead mb-5 fw-light" style={{ maxWidth: '600px' }}>
-                    Why settle for cold takes? Get access to real-time reviews from the biggest cinephiles on the planet. Start your free membership today.
+                    Kenapa puas dengan ulasan biasa? Dapatkan akses ke ulasan waktu nyata dari para penggemar film terbesar di planet ini. Mulai keanggotaan gratis Anda hari ini.
                 </p>
 
                 <button className="btn btn-primary-custom btn-lg rounded-pill px-5 py-3 fw-black shadow-lg">
-                    Join the Hall of Fame
+                    Bergabung Sekarang
                 </button>
             </div>
 
