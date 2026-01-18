@@ -260,7 +260,7 @@ export default function ReviewSection({ movieId }) {
                                     style={{ letterSpacing: '0.1em' }}
                                     disabled={isSubmitting}
                                 >
-                                    {isSubmitting ? 'Mengirim...' : 'Posting Review'}
+                                    {isSubmitting ? 'Mengirim...' : 'Posting Ulasan'}
                                 </button>
                             </form>
                         </div>
@@ -298,7 +298,7 @@ export default function ReviewSection({ movieId }) {
                                             </div>
                                             <div>
                                                 <h4 className="h6 fw-bold text-white mb-0">
-                                                    {review.user?.name || 'Anonymous'}
+                                                    {review.user?.name || 'Anonim'}
                                                 </h4>
                                                 <p className="text-white-50 small mb-0">
                                                     {formatDate(review.created_at)}

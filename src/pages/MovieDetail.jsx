@@ -19,7 +19,7 @@ export default function MovieDetail() {
     }, [id]);
 
     if (!movie) {
-        return <div className="text-white">Loading...</div>; // Simple loading state
+        return <div className="text-white">Memuat...</div>; // Simple loading state
     }
 
     return (

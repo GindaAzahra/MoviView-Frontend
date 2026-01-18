@@ -35,7 +35,7 @@ export default function LoginBanner() {
                 </div>
 
                 <div className="text-white-50 small">
-                    © 2026 MoviView Media Group. All rights reserved.
+                    © 2026 MoviView Media Group. Hak cipta dilindungi undang-undang.
                 </div>
             </div>
         </div>

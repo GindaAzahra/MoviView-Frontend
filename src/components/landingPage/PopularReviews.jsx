@@ -19,11 +19,11 @@ export default function PopularReviews() {
             <div className="d-flex justify-content-between align-items-center mb-4 px-2">
                 <h2 className="h2 fw-bold text-white d-flex align-items-center gap-3 mb-0" style={{ fontWeight: 900, letterSpacing: '-1px' }}>
                     <span className="d-block bg-primary-custom rounded-pill" style={{ width: '8px', height: '32px' }}></span>
-                    Popular Movies
+                    Film Terpopuler
                 </h2>
-                <a href="/movies" className="text-primary-custom text-decoration-none fw-bold d-flex align-items-center gap-1 small">
-                    View All <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>chevron_right</span>
-                </a>
+                <Link to="/movies?type=popular" className="text-primary-custom text-decoration-none fw-bold d-flex align-items-center gap-1 small">
+                    Lihat Semua <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>chevron_right</span>
+                </Link>
             </div>
 
             <div className="row g-4">
@@ -40,14 +40,14 @@ export default function PopularReviews() {
                                     <span className="material-symbols-outlined fill-icon" style={{ fontSize: '14px', fontVariationSettings: "'FILL' 1" }}>star</span> {movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}
                                 </div>
                             </div>
-                            <h3 className="h5 fw-bold text-white mb-2 text-truncate" title={movie.title}>{movie.title}</h3>
+                            <h3 className="h5 fw-bold text-white mb-2 text-truncate" title={movie.title}>{movie.original_title}</h3>
                             <div className="d-flex align-items-center gap-3 pt-2 border-top border-white border-opacity-10 justify-content-between">
                                 <div>
-                                    <p className="mb-0 fw-bold text-white-50 small" style={{ fontSize: '0.8rem' }}>Release</p>
+                                    <p className="mb-0 fw-bold text-white-50 small" style={{ fontSize: '0.8rem' }}>Rilis</p>
                                     <p className="mb-0 text-white" style={{ fontSize: '0.8rem' }}>{movie.release_date}</p>
                                 </div>
                                 <div className="text-end">
-                                    <p className="mb-0 fw-bold text-white-50 small" style={{ fontSize: '0.8rem' }}>Votes</p>
+                                    <p className="mb-0 fw-bold text-white-50 small" style={{ fontSize: '0.8rem' }}>Suara</p>
                                     <p className="mb-0 text-white" style={{ fontSize: '0.8rem' }}>{movie.vote_count}</p>
                                 </div>
                             </div>

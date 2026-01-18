@@ -1,19 +1,94 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Navbar from "../../components/landingPage/Navbar";
 import Footer from "../../components/landingPage/Footer";
-import { getAllMovies } from "../../api";
+import { getAllMovies, searchMovies } from "../../api";
 import { Link } from "react-router-dom";
 
 export default function MovieGrid() {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const initialType = queryParams.get("type") || "popular";
+
     const [movies, setMovies] = useState([]);
+    const [type, setType] = useState(initialType);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        getAllMovies("popular", 1).then((response) => {
-            if (!response.error) {
-                setMovies(response.data);
+        const queryParams = new URLSearchParams(location.search);
+        const newType = queryParams.get("type") || "popular";
+        setType(newType);
+        setCurrentPage(1); // Reset page when type changes from URL
+    }, [location.search]);
+
+    useEffect(() => {
+        if (!searchQuery) {
+            fetchMovies();
+        }
+    }, [type, currentPage]);
+
+    const fetchMovies = async () => {
+        setLoading(true);
+        const response = await getAllMovies(type, currentPage);
+        if (!response.error) {
+            setMovies(response.data);
+            if (response.total_pages) {
+                setTotalPages(response.total_pages);
+                setCurrentPage(response.current_page);
+            } else {
+                setTotalPages(1);
             }
-        });
-    }, []);
+        }
+        setLoading(false);
+    };
+
+    const handleSearch = async (e) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+        if (query.length > 2) {
+            setLoading(true);
+            const { error, data } = await searchMovies(query);
+            if (!error) {
+                setMovies(data);
+            }
+            setLoading(false);
+        } else if (query.length === 0) {
+            fetchMovies();
+        }
+    };
+
+    const handleTypeChange = (newType) => {
+        setType(newType);
+        setSearchQuery(""); // Clear search when changing category
+        setCurrentPage(1); // Reset to first page
+    };
+
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    // Helper to generate page numbers
+    const getPageNumbers = () => {
+        const pages = [];
+        const maxPagesToShow = 5;
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+        if (endPage - startPage < maxPagesToShow - 1) {
+            startPage = Math.max(1, endPage - maxPagesToShow + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+        return pages;
+    };
 
     return (
         <div className="bg-dark min-vh-100 font-sans text-white d-flex flex-column">
@@ -23,86 +98,112 @@ export default function MovieGrid() {
                 {/* Section Title & Filter */}
                 <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-5 gap-3">
                     <div>
-                        <h2 className="h2 fw-bold text-white mb-2">Popular Movies</h2>
-                        <p className="text-muted-gray small">Discover the latest blockbusters and trending hits.</p>
+                        <h2 className="h2 fw-bold text-white mb-2 text-uppercase">
+                            {searchQuery ? `Pencarian: ${searchQuery}` : 
+                             type === 'popular' ? 'Film Terpopuler' : 'Film Rating Tertinggi'}
+                        </h2>
+                        <p className="text-muted-gray small">Temukan film blockbuster terbaru dan hit yang sedang tren.</p>
                     </div>
-                    <div className="d-flex gap-3">
-                        <button className="btn btn-outline-light bg-card-dark border-opacity-10 rounded-pill d-flex align-items-center gap-2 px-4 py-2 small hover-bg-white-5">
-                            <span className="material-symbols-outlined text-primary-custom" style={{fontSize: '18px'}}>filter_list</span>
-                            <span className="fw-medium">Filters</span>
-                        </button>
-                        <button className="btn btn-outline-light bg-card-dark border-opacity-10 rounded-pill d-flex align-items-center gap-2 px-4 py-2 small hover-bg-white-5">
-                            <span className="fw-medium">Release Year</span>
-                            <span className="material-symbols-outlined" style={{fontSize: '18px'}}>keyboard_arrow_down</span>
-                        </button>
+
+                    <div className="d-flex flex-column flex-md-row gap-3">
+                         {/* Search bar inside Movie Grid */}
+                        <div className="position-relative" style={{ width: '300px' }}>
+                            <span className="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50" style={{ fontSize: '20px' }}>search</span>
+                            <input 
+                                type="text" 
+                                className="form-control search-input ps-5 rounded-pill bg-card-dark text-white border-white border-opacity-10" 
+                                placeholder="Cari film..." 
+                                value={searchQuery}
+                                onChange={handleSearch}
+                            />
+                        </div>
+
                     </div>
                 </div>
 
                 {/* Movie Grid */}
-                <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
-                    {movies.map((movie) => (
-                        <div key={movie.id} className="col">
-                              <Link 
-        to={`/movie/${movie.id}`} 
-        className="text-decoration-none text-light"
-      >
-                            <div className="d-flex flex-column gap-3 h-100 group cursor-pointer">
-                                <div className="position-relative w-100 rounded-4 overflow-hidden bg-card-dark" style={{ aspectRatio: '2/3' }}>
-                                    <div 
-                                        className="position-absolute top-0 start-0 w-100 h-100 bg-cover bg-center transition-transform duration-500 movie-poster-hover"
-                                        style={{ 
-                                            backgroundImage: `url(https://image.tmdb.org/t/p/w500${movie.poster_path})`,
-                                            backgroundSize: 'cover',
-                                            backgroundPosition: 'center'
-                                         }}
-                                    ></div>
-                                    <div className="position-absolute top-0 end-0 m-2 d-flex align-items-center gap-1 px-2 py-1 bg-dark bg-opacity-75 backdrop-blur rounded-3 border border-white border-opacity-10">
-                                        <span className="material-symbols-outlined text-primary-custom" style={{ fontSize: '14px' }}>star</span>
-                                        <span className="small fw-bold text-white">{movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}</span>
-                                    </div>
-                                    <div className="position-absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 transition-opacity hover-overlay"></div>
-                                </div>
-                                <div>
-                                    <h3 className="h5 fw-bold text-white mb-1 text-truncate hover-text-primary transition-colors">{movie.title}</h3>
-                                    <p className="text-muted-gray small fw-medium mb-0">
-                                        {movie.release_date ? movie.release_date.split('-')[0] : 'N/A'}
-                                    </p>
-                                </div>
-                                
-                            </div>
-                                </Link>          
+                {loading ? (
+                    <div className="d-flex justify-content-center py-5">
+                        <div className="spinner-border text-primary-custom" role="status">
+                            <span className="visually-hidden">Memuat...</span>
                         </div>
-                       
-                    ))}
-                    
-                    {/* Placeholder for when movies are loading or if we want to show static examples like in the prompt if API fails, 
-                        but effectively we map the API response. */}
-                </div>
-
-                {/* Pagination Section */}
-                <div className="mt-5 d-flex flex-column align-items-center gap-4">
-                    <div className="d-flex align-items-center gap-3">
-                        <button className="btn btn-outline-primary-custom rounded-pill px-4 py-2 d-flex align-items-center gap-2 small fw-bold text-uppercase" style={{ letterSpacing: '1px' }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_back</span>
-                            Previous
-                        </button>
-                        
-                        <div className="d-flex align-items-center gap-1 px-3">
-                            <button className="btn btn-primary-custom rounded-circle d-flex align-items-center justify-content-center p-0 shadow fw-bold text-dark" style={{ width: '40px', height: '40px' }}>1</button>
-                            <button className="btn btn-link text-white text-decoration-none rounded-circle d-flex align-items-center justify-content-center p-0 hover-bg-white-10" style={{ width: '40px', height: '40px' }}>2</button>
-                            <button className="btn btn-link text-white text-decoration-none rounded-circle d-flex align-items-center justify-content-center p-0 hover-bg-white-10" style={{ width: '40px', height: '40px' }}>3</button>
-                            <button className="btn btn-link text-white text-decoration-none rounded-circle d-flex align-items-center justify-content-center p-0 hover-bg-white-10" style={{ width: '40px', height: '40px' }}>4</button>
-                            <span className="text-muted-gray d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>...</span>
-                            <button className="btn btn-link text-white text-decoration-none rounded-circle d-flex align-items-center justify-content-center p-0 hover-bg-white-10" style={{ width: '40px', height: '40px' }}>10</button>
-                        </div>
-
-                        <button className="btn btn-outline-primary-custom rounded-pill px-4 py-2 d-flex align-items-center gap-2 small fw-bold text-uppercase" style={{ letterSpacing: '1px' }}>
-                            Next
-                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
-                        </button>
                     </div>
-                    <p className="text-muted-gray small fw-medium">Showing 1-20 of movies available</p>
-                </div>
+                ) : (
+                    <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
+                        {movies.length > 0 ? movies.map((movie) => (
+                            <div key={movie.id} className="col">
+                                <Link to={`/movie/${movie.id}`} className="text-decoration-none text-light">
+                                    <div className="d-flex flex-column gap-3 h-100 group cursor-pointer">
+                                        <div className="position-relative w-100 rounded-4 overflow-hidden bg-card-dark" style={{ aspectRatio: '2/3' }}>
+                                            <div 
+                                                className="position-absolute top-0 start-0 w-100 h-100 bg-cover bg-center transition-transform duration-500 movie-poster-hover"
+                                                style={{ 
+                                                    backgroundImage: `url(https://image.tmdb.org/t/p/w500${movie.poster_path})`,
+                                                    backgroundSize: 'cover',
+                                                    backgroundPosition: 'center'
+                                                }}
+                                            ></div>
+                                            <div className="position-absolute top-0 end-0 m-2 d-flex align-items-center gap-1 px-2 py-1 bg-dark bg-opacity-75 backdrop-blur rounded-3 border border-white border-opacity-10">
+                                                <span className="material-symbols-outlined text-primary-custom" style={{ fontSize: '14px' }}>star</span>
+                                                <span className="small fw-bold text-white">{movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 className="h5 fw-bold text-white mb-1 text-truncate hover-text-primary transition-colors">{movie.original_title}</h3>
+                                            <p className="text-muted-gray small fw-medium mb-0">
+                                                {movie.release_date ? movie.release_date.split('-')[0] : 'N/A'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </Link>          
+                            </div>
+                        )) : (
+                            <div className="col-12 text-center py-5">
+                                <p className="text-muted-gray">Film tidak ditemukan.</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+                {/* Pagination Section */}
+                {!searchQuery && totalPages > 1 && (
+                    <div className="mt-5 d-flex flex-column align-items-center gap-4">
+                        <div className="d-flex align-items-center gap-3">
+                            <button 
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="btn btn-outline-primary-custom rounded-pill px-4 py-2 d-flex align-items-center gap-2 small fw-bold text-uppercase" 
+                                style={{ letterSpacing: '1px' }}
+                            >
+                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_back</span>
+                                Sebelumnya
+                            </button>
+                            
+                            <div className="d-flex align-items-center gap-1 px-3">
+                                {getPageNumbers().map((pageNum) => (
+                                    <button 
+                                        key={pageNum}
+                                        onClick={() => handlePageChange(pageNum)}
+                                        className={`btn rounded-circle d-flex align-items-center justify-content-center p-0 fw-bold ${currentPage === pageNum ? 'btn-primary-custom text-dark shadow' : 'btn-link text-white text-decoration-none hover-bg-white-10'}`} 
+                                        style={{ width: '40px', height: '40px' }}
+                                    >
+                                        {pageNum}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <button 
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="btn btn-outline-primary-custom rounded-pill px-4 py-2 d-flex align-items-center gap-2 small fw-bold text-uppercase" 
+                                style={{ letterSpacing: '1px' }}
+                            >
+                                Selanjutnya
+                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
+                            </button>
+                        </div>
+                        <p className="text-muted-gray small fw-medium">Halaman {currentPage} dari {totalPages}</p>
+                    </div>
+                )}
 
             </main>
 

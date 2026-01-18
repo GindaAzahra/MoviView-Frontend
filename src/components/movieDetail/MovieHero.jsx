@@ -63,7 +63,7 @@ export default function MovieHero({ movie }) {
                             <div className="d-flex align-items-center gap-2 mt-3">
                                 <span className="material-symbols-outlined text-primary-custom filled-icon">star</span>
                                 <span className="h3 fw-bold text-primary-custom mb-0">{rating}<span className="h5 text-white-50 fw-normal">/10</span></span>
-                                <span className="ms-2 text-white-50 small">({movie.vote_count} Ratings)</span>
+                                <span className="ms-2 text-white-50 small">({movie.vote_count} Penilaian)</span>
                             </div>
 
                             <p className="lead text-white-50 mt-4" style={{ maxWidth: '670px' }}>

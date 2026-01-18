@@ -52,7 +52,7 @@ export default function AdminSidebar() {
             aria-current={isActive('/admin') ? 'page' : undefined}
           >
             <span className="material-symbols-outlined">dashboard</span>
-            Dashboard
+            Dasbor
           </Link>
         </li>
 
