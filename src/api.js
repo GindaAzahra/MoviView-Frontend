@@ -182,19 +182,111 @@ async function deleteReview(id) {
   return { error: false, data: responseJson.data };
 }
 
+async function getAllReviews(page = 1) {
+  const response = await fetch(`${BASE_URL}/reviews?page=${page}`, {
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+      Accept: "application/json",
+    },
+  });
+
+  const responseJson = await response.json();
+
+  if (responseJson.status !== "success") {
+    return { error: true, data: null, message: responseJson.message };
+  }
+
+  return {
+    error: false,
+    data: {
+      data: responseJson.data ?? [],
+      meta: responseJson.meta ?? null,
+    },
+  };
+}
+
+function getFilenameFromContentDisposition(contentDisposition, fallback) {
+  if (!contentDisposition) return fallback;
+
+  // handles: attachment; filename="file.xlsx"
+  const match = /filename\*?=(?:UTF-8'')?("?)([^";]+)\1/i.exec(contentDisposition);
+  if (!match) return fallback;
+
+  try {
+    return decodeURIComponent(match[2]);
+  } catch {
+    return match[2];
+  }
+}
+
+async function exportReviews(type, movieIds = []) {
+  const normalizedType = String(type || "").toLowerCase();
+  if (normalizedType !== "excel" && normalizedType !== "pdf") {
+    return { error: true, data: null, message: "Invalid export type." };
+  }
+
+  const qs = new URLSearchParams();
+  // optional filter: ?id_movie=1&id_movie=2 ...
+  if (movieIds?.length) movieIds.forEach((id) => qs.append("id_movie", String(id)));
+
+  const response = await fetch(
+    `${BASE_URL}/reviews/export/${normalizedType}${qs.toString() ? `?${qs.toString()}` : ""}`,
+    {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        Accept: "application/octet-stream",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    // Laravel will typically send JSON on error
+    let message = "Failed to export reviews.";
+    try {
+      const j = await response.json();
+      message = j?.message || message;
+    } catch {
+      // ignore
+    }
+    return { error: true, data: null, message };
+  }
+
+  const blob = await response.blob();
+  const suggested =
+    normalizedType === "excel" ? "reviews.xlsx" : "reviews.pdf";
+  const filename = getFilenameFromContentDisposition(
+    response.headers.get("content-disposition"),
+    suggested
+  );
+
+  return { error: false, data: { blob, filename } };
+}
+
+async function exportReviewsExcel(movieIds = []) {
+  return exportReviews("excel", movieIds);
+}
+
+async function exportReviewsPdf(movieIds = []) {
+  return exportReviews("pdf", movieIds);
+}
 
 export {
- getAccessToken,
- putAccessToken,
- removeAccessToken,
- register,
- login,
- getUserLogged,
- logoutUser,
- getAllMovies,
- getMovieById,
- submitReview,
- getReviewsByMovieId,
- updateReview,
- deleteReview
-}
+  BASE_URL,
+  TMDB_IMG,
+  getAccessToken,
+  putAccessToken,
+  removeAccessToken,
+  register,
+  login,
+  getUserLogged,
+  logoutUser,
+  getAllMovies,
+  getMovieById,
+  submitReview,
+  getReviewsByMovieId,
+  updateReview,
+  deleteReview,
+  getAllReviews,
+  exportReviewsExcel,
+  exportReviewsPdf,
+};

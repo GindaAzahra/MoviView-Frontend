@@ -2,20 +2,20 @@ import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
 import DashboardTable from '../../components/admin/DashboardTable';
 
-export default function AdminDashboard() {
+export default function AdminDashboard({ children, title }) {
+    const content = children ?? '';
+
     return (
         <div className="d-flex bg-admin-dark min-vh-100 font-sans text-white">
             <AdminSidebar />
             <div className="d-flex flex-column flex-grow-1" style={{ marginLeft: '280px' }}>
-                <AdminNavbar />
+                <AdminNavbar title={title} />
                 <main className="p-4">
-                    
+                    {content}
 
-                    <DashboardTable />
-                    
                     {/* Footer */}
                     <div className="mt-5 text-center text-white-50 small">
-                         <p className="mb-0">© 2024 Cine Hall Analytics Dashboard. All rights reserved.</p>
+                         <p className="mb-0">© 23552011281_Ginda Azahra_TIF RP 23 CNS B</p>
                     </div>
                 </main>
             </div>
