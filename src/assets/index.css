@@ -1,0 +1,338 @@
+:root {
+  --bs-body-font-family: "Be Vietnam Pro", sans-serif;
+  --cine-primary: #eedc81;
+  --cine-bg-dark: #1a1a1a;
+  --cine-surface: #2a2a2a;
+  --cine-crimson: #5c0000;
+  --cine-accent-dark: #171611;
+  --cine-input-bg: #26241c;
+  --cine-card-dark: #252525; /* New color from user request */
+  --cine-muted-gray: #A0A0A0; /* New color */
+
+  /* Admin Dashboard Colors */
+  --admin-bg: #121212;
+  --admin-sidebar: #1e1e1e;
+  --admin-primary: #f2cc0d;
+}
+
+body {
+  background-color: var(--cine-bg-dark);
+  color: white;
+  font-family: var(--bs-body-font-family);
+  margin: 0;
+  /* Reset default margin */
+}
+
+/* Custom Color Utilities */
+.text-primary-custom {
+  color: var(--cine-primary) !important;
+}
+
+.bg-primary-custom {
+  background-color: var(--cine-primary) !important;
+  color: var(--cine-bg-dark) !important;
+}
+
+.bg-surface {
+  background-color: var(--cine-surface);
+}
+
+.bg-crimson {
+  background-color: var(--cine-crimson);
+}
+
+.border-primary-custom {
+  border-color: var(--cine-primary) !important;
+}
+
+/* New Grid Page Utilities */
+.bg-card-dark {
+    background-color: var(--cine-card-dark);
+}
+.text-muted-gray {
+    color: var(--cine-muted-gray);
+}
+.hover-bg-white-5:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+.hover-bg-white-10:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Buttons */
+.btn-primary-custom {
+  background-color: var(--cine-primary);
+  color: var(--cine-bg-dark);
+  border: none;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-custom:hover {
+  background-color: white;
+  color: var(--cine-bg-dark);
+  transform: translateY(-2px);
+}
+
+.btn-outline-custom {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  font-weight: 700;
+}
+
+.btn-outline-custom:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+/* Navigation */
+.navbar {
+  background-color: rgba(26, 26, 26, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: white;
+}
+
+.nav-link.active {
+  color: var(--cine-primary);
+  border-bottom: 2px solid var(--cine-primary);
+}
+
+.search-input {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.search-input:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--cine-primary);
+  color: white;
+  box-shadow: none;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Hero */
+.hero-bg {
+  /* Note: URL handled in inline style or class modification if needed, but keeping default here */
+  background-image: linear-gradient(
+      rgba(26, 26, 26, 0.8),
+      rgba(26, 26, 26, 0.5),
+      rgba(26, 26, 26, 0.9)
+    ),
+    url("https://lh3.googleusercontent.com/aida-public/AB6AXuAtPA8joShGkVI6ZpDqY9cMpBkJV-RXO3TiUtyO569d57R9dHJDmSBdUclFogkBnsZwhhZCOYA3gZHESwqMj7UCjeiOQs5I75i9YJNSO_iSiO0tbiEB2sxQKnZhVa3S3zhavzZHHSIEmtufCMM8pM6giN1ECqXMFVLUqrU-jR47mINXg_s2JwFLmD6wLqL8wO-lFpl_pNOxz7m2_uQGGKoZ43QZKM_BZPENQpVLP7s0YJNlGE5DsWiN-eDcTtR1yA-SCS4A82Di0tY");
+  background-size: cover;
+  background-position: center;
+  min-height: 560px;
+  border-radius: 0.75rem;
+  transition: transform 0.7s;
+}
+
+.hero-container:hover .hero-bg {
+  transform: scale(1.02);
+}
+
+.text-shadow-gold {
+  text-shadow: 0 0 10px rgba(238, 220, 129, 0.3);
+}
+
+/* Cards */
+.review-card {
+  background-color: rgba(42, 42, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  transition: all 0.3s;
+}
+
+.review-card:hover {
+  border-color: rgba(238, 220, 129, 0.4);
+  transform: translateY(-5px);
+}
+
+.poster-wrapper {
+  position: relative;
+  aspect-ratio: 2/3;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.poster-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.review-card:hover .poster-img {
+  transform: scale(1.1);
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(238, 220, 129, 0.2);
+}
+
+/* Coming Soon */
+.movie-card {
+  cursor: pointer;
+}
+
+.movie-card .poster-wrapper .overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, black, transparent, transparent);
+  opacity: 0.8;
+}
+
+.movie-card .poster-img {
+  filter: grayscale(100%);
+}
+
+.movie-card:hover .poster-img {
+  filter: grayscale(0%);
+}
+
+.date-badge {
+  background-color: var(--cine-primary);
+  color: var(--cine-bg-dark);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+/* Footer */
+.film-strip-border {
+  background-image: linear-gradient(90deg, #eedc81 50%, transparent 50%),
+    linear-gradient(90deg, #eedc81 50%, transparent 50%);
+  background-repeat: repeat-x;
+  background-size: 20px 10px;
+  background-position: 0 0, 0 100%;
+  border-top: 8px solid var(--cine-primary);
+}
+
+/* Form inputs in footer */
+.footer-input {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+}
+
+.footer-input:focus {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  box-shadow: none;
+}
+
+/* Utilities */
+.h-14 {
+  height: 3.5rem;
+}
+
+.gap-12 {
+  gap: 3rem;
+}
+
+.text-xs-custom {
+  font-size: 0.75rem;
+}
+
+/* Login Page Only */
+.bg-dark-accent {
+  background-color: var(--cine-accent-dark);
+}
+
+.bg-input-custom {
+  background-color: var(--cine-input-bg) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+}
+
+.bg-input-custom:focus {
+  border-color: var(--cine-primary) !important;
+  box-shadow: 0 0 0 1px var(--cine-primary) !important;
+}
+
+.bg-input-custom::placeholder {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.login-banner-overlay {
+  background-image: linear-gradient(
+    to right,
+    rgba(26, 26, 26, 0.8),
+    transparent
+  );
+}
+
+/* ADMIN DASHBOARD STYLES */
+.bg-admin-dark {
+  background-color: var(--admin-bg) !important;
+}
+.bg-admin-sidebar {
+  background-color: var(--admin-sidebar) !important;
+}
+.text-admin-primary {
+  color: var(--admin-primary) !important;
+}
+.btn-admin-primary {
+  background-color: var(--admin-primary);
+  color: #121212;
+  font-weight: bold;
+  border: none;
+}
+.btn-admin-primary:hover {
+  background-color: #dcb90a;
+  color: #000;
+}
+.btn-admin-outline-primary {
+  border: 1px solid var(--admin-primary);
+  color: var(--admin-primary);
+  background: transparent;
+  font-weight: bold;
+}
+.btn-admin-outline-primary:hover {
+  background: rgba(242, 204, 13, 0.1);
+  color: var(--admin-primary);
+}
+.admin-card {
+  background-color: var(--admin-sidebar);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.admin-table-row:hover {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+.admin-search-input {
+  background-color: var(--admin-sidebar) !important;
+  border: none !important;
+  color: white !important;
+}
+.admin-search-input:focus {
+  box-shadow: 0 0 0 2px var(--admin-primary) !important;
+}
+.admin-navbar {
+  background-color: rgba(18, 18, 18, 0.8) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
