@@ -93,7 +93,12 @@ async function getAllMovies(type, numberPage) {
     return { error: true, data: null };
   }
 
-  return { error: false, data: responseJson.data };
+  return { 
+    error: false, 
+    data: responseJson.data, 
+    total_pages: responseJson.total_pages, 
+    current_page: responseJson.current_page 
+  };
 }
 
 
@@ -182,6 +187,15 @@ async function deleteReview(id) {
   return { error: false, data: responseJson.data };
 }
 
+async function searchMovies(query) {
+  const response = await fetch(`${BASE_URL}/movies/search?q=${query}`);
+  const responseJson = await response.json();
+  if (responseJson.status !== "success") {
+    return { error: true, data: null };
+  }
+
+  return { error: false, data: responseJson.data };
+}
 
 export {
  getAccessToken,
@@ -196,5 +210,6 @@ export {
  submitReview,
  getReviewsByMovieId,
  updateReview,
- deleteReview
+ deleteReview,
+ searchMovies
 }

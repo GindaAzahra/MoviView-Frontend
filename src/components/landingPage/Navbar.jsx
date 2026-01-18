@@ -19,8 +19,6 @@ export default function Navbar() {
         fetchUser();
     }, []);
 
- 
-
     const logout = async () => {
        const { error, data } = await logoutUser();
                 if (!error) {
@@ -48,16 +46,11 @@ export default function Navbar() {
                     {/* Nav Links (Desktop) */}
                     <div className="d-none d-md-flex align-items-center gap-4">
                         <Link className="nav-link active" to="/">Home</Link>
+                        <Link className="nav-link" to="/movies">Movies</Link>
                     </div>
                 </div>
 
                 <div className="d-flex align-items-center gap-3 ms-auto">
-                    {/* Search */}
-                    <div className="position-relative d-none d-sm-block" style={{ width: '300px' }}>
-                        <span className="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50" style={{ fontSize: '20px' }}>search</span>
-                        <input type="text" className="form-control search-input ps-5 rounded-3" placeholder="Search movies, critics..." />
-                    </div>
-
                     {user ? (
                          <div className="dropdown">
                             <button className="btn btn-primary-custom rounded-3 px-4 py-2 text-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
