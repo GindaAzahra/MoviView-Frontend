@@ -7,12 +7,14 @@ export default async function handler(req, res) {
     const options = {
       method: req.method,
       headers: {
-        'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': req.headers.accept || '*/*',
+        // TRIK: Berpura-pura berasal dari domain itu sendiri
+        'Referer': 'http://moviview.infinityfreeapp.com/',
+        'Origin': 'http://moviview.infinityfreeapp.com',
       },
     };
 
-    // Forward relevant headers
     if (req.headers.authorization) {
       options.headers['Authorization'] = req.headers.authorization;
     }
@@ -21,47 +23,40 @@ export default async function handler(req, res) {
       options.headers['Content-Type'] = req.headers['content-type'];
     }
 
-    // Forward body if present
     if (req.method !== 'GET' && req.method !== 'HEAD' && req.body) {
       options.body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
     }
 
     const response = await fetch(targetUrl, options);
-    
-    // Copy headers from target response to our response
     const contentType = response.headers.get('content-type');
-    const contentDisposition = response.headers.get('content-disposition');
     
     if (contentType) res.setHeader('Content-Type', contentType);
+    const contentDisposition = response.headers.get('content-disposition');
     if (contentDisposition) res.setHeader('Content-Disposition', contentDisposition);
 
-    // Read body as arrayBuffer to handle both JSON and Binary efficiently
     const buffer = await response.arrayBuffer();
     const nodeBuffer = Buffer.from(buffer);
 
-    // Check if it's JSON
-    if (contentType && contentType.includes('application/json')) {
-      try {
-        const json = JSON.parse(nodeBuffer.toString());
-        return res.status(response.status).json(json);
-      } catch (e) {
-        // Fallback to sending as text if JSON parsing fails
-      }
-    }
-
-    // Check for InfinityFree Anti-Bot in text responses
+    // Jika kena blokir (HTML), berikan info lebih detail
     if (contentType && contentType.includes('text/html')) {
         const text = nodeBuffer.toString();
         if (text.includes('__test')) {
             return res.status(403).json({
                 error: true,
-                message: "InfinityFree Anti-Bot detected.",
-                debug: "Please visit the site directly in a browser first."
+                message: "Blokir InfinityFree Aktif",
+                info: "Proxy Vercel sudah bekerja, tapi InfinityFree menolak koneksi dari Server.",
+                solusi: "Silakan buka URL backend Anda satu kali di browser ini agar browser mendapatkan cookie izin, lalu refresh website Vercel."
             });
         }
     }
 
-    // Send as raw buffer (works for PDFs, Excel, etc.)
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        const json = JSON.parse(nodeBuffer.toString());
+        return res.status(response.status).json(json);
+      } catch (e) {}
+    }
+
     res.status(response.status).send(nodeBuffer);
 
   } catch (error) {
