@@ -1,6 +1,5 @@
 
 export default async function handler(req, res) {
-  // Ambil path setelah /api
   const fullPath = req.url.replace(/^\/api/, '');
   const targetUrl = `http://moviview.infinityfreeapp.com/api${fullPath}`;
 
@@ -8,40 +7,63 @@ export default async function handler(req, res) {
     const options = {
       method: req.method,
       headers: {
-        // Gunakan User-Agent browser asli atau Googlebot untuk mencoba mem-bypass Anti-Bot
         'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        'Accept': req.headers.accept || 'application/json',
       },
     };
 
-    // Ambil token dari header asli jika ada
+    // Forward relevant headers
     if (req.headers.authorization) {
       options.headers['Authorization'] = req.headers.authorization;
     }
+    
+    if (req.headers['content-type']) {
+      options.headers['Content-Type'] = req.headers['content-type'];
+    }
 
-    // Jika ada body (POST/PUT), teruskan
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
-      options.body = JSON.stringify(req.body);
+    // Forward body if present
+    if (req.method !== 'GET' && req.method !== 'HEAD' && req.body) {
+      options.body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
     }
 
     const response = await fetch(targetUrl, options);
-    const data = await response.json().catch(() => null);
+    
+    // Copy headers from target response to our response
+    const contentType = response.headers.get('content-type');
+    const contentDisposition = response.headers.get('content-disposition');
+    
+    if (contentType) res.setHeader('Content-Type', contentType);
+    if (contentDisposition) res.setHeader('Content-Disposition', contentDisposition);
 
-    // Jika response bukan JSON (kemungkinan masih kena blokir HTML)
-    if (!data) {
-      const text = await response.text();
-      if (text.includes('__test')) {
-        return res.status(403).json({
-          error: true,
-          message: "InfinityFree Anti-Bot masih aktif. Hosting ini memblokir akses API dari server luar.",
-          debug: "Silakan buka http://moviview.infinityfreeapp.com sekali di browser Anda, lalu coba lagi."
-        });
+    // Read body as arrayBuffer to handle both JSON and Binary efficiently
+    const buffer = await response.arrayBuffer();
+    const nodeBuffer = Buffer.from(buffer);
+
+    // Check if it's JSON
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        const json = JSON.parse(nodeBuffer.toString());
+        return res.status(response.status).json(json);
+      } catch (e) {
+        // Fallback to sending as text if JSON parsing fails
       }
-      return res.status(response.status).send(text);
     }
 
-    res.status(response.status).json(data);
+    // Check for InfinityFree Anti-Bot in text responses
+    if (contentType && contentType.includes('text/html')) {
+        const text = nodeBuffer.toString();
+        if (text.includes('__test')) {
+            return res.status(403).json({
+                error: true,
+                message: "InfinityFree Anti-Bot detected.",
+                debug: "Please visit the site directly in a browser first."
+            });
+        }
+    }
+
+    // Send as raw buffer (works for PDFs, Excel, etc.)
+    res.status(response.status).send(nodeBuffer);
+
   } catch (error) {
     res.status(500).json({ error: true, message: error.message });
   }
