@@ -45,16 +45,6 @@ export default function AdminSidebar() {
       </Link>
       <hr className="text-white-50" />
       <ul className="nav nav-pills flex-column gap-3 mb-auto">
-        <li className="nav-item">
-          <Link
-            to="/admin"
-            className={`nav-link d-flex align-items-center gap-2 ${isActive('/admin') ? 'active' : ''}`}
-            aria-current={isActive('/admin') ? 'page' : undefined}
-          >
-            <span className="material-symbols-outlined">dashboard</span>
-            Dasbor
-          </Link>
-        </li>
 
         <li className="nav-item">
           <Link

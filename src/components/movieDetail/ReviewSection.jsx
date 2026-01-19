@@ -275,11 +275,23 @@ export default function ReviewSection({ movieId }) {
 
                     <div className="d-flex flex-column gap-4">
                         {isLoadingReviews ? (
-                            <div className="text-center text-white-50 py-5">
-                                <div className="spinner-border text-primary-custom" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
-                                <p className="mt-3">Memuat review...</p>
+                            <div className="d-flex flex-column gap-4 w-100">
+                                {[...Array(3)].map((_, i) => (
+                                    <div key={i} className="bg-surface p-4 rounded-3 border border-white border-opacity-10">
+                                        <div className="d-flex justify-content-between align-items-start mb-3">
+                                            <div className="d-flex gap-3 align-items-center">
+                                                <div className="rounded-circle skeleton" style={{ width: '48px', height: '48px' }}></div>
+                                                <div>
+                                                    <div className="skeleton mb-2" style={{ height: '16px', width: '100px', borderRadius: '4px' }}></div>
+                                                    <div className="skeleton" style={{ height: '12px', width: '80px', borderRadius: '4px' }}></div>
+                                                </div>
+                                            </div>
+                                            <div className="skeleton" style={{ height: '20px', width: '80px', borderRadius: '4px' }}></div>
+                                        </div>
+                                        <div className="skeleton" style={{ height: '16px', width: '100%', borderRadius: '4px', marginBottom: '8px' }}></div>
+                                        <div className="skeleton" style={{ height: '16px', width: '60%', borderRadius: '4px' }}></div>
+                                    </div>
+                                ))}
                             </div>
                         ) : reviews.length === 0 ? (
                             <div className="text-center text-white-50 py-5">

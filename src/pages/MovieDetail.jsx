@@ -5,6 +5,7 @@ import Navbar from '../components/landingPage/Navbar';
 import Footer from '../components/landingPage/Footer';
 import MovieHero from '../components/movieDetail/MovieHero';
 import ReviewSection from '../components/movieDetail/ReviewSection';
+import MovieDetailSkeleton from '../components/movieDetail/MovieDetailSkeleton';
 
 export default function MovieDetail() {
     const { id } = useParams();
@@ -19,7 +20,13 @@ export default function MovieDetail() {
     }, [id]);
 
     if (!movie) {
-        return <div className="text-white">Memuat...</div>; // Simple loading state
+        return (
+            <div className="min-vh-100 d-flex flex-column" style={{ backgroundColor: 'var(--cine-bg-dark)' }}>
+                <Navbar />
+                <MovieDetailSkeleton />
+                <Footer />
+            </div>
+        );
     }
 
     return (

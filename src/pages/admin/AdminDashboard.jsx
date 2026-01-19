@@ -15,7 +15,7 @@ export default function AdminDashboard({ children, title }) {
 
                     {/* Footer */}
                     <div className="mt-5 text-center text-white-50 small">
-                         <p className="mb-0">© 23552011281_Ginda Azahra_TIF RP 23 CNS B</p>
+                         <p className="mb-0">&copy; Copyright by 23552011281_Ginda Azahra_TIF RP 23 CNS B_UASWEB1</p>
                     </div>
                 </main>
             </div>

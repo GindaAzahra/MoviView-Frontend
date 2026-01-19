@@ -4,12 +4,15 @@ import { getAllMovies } from '../../api';
 
 export default function ComingSoon() {
     const [movies, setMovies] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        setLoading(true);
         getAllMovies("top_rated", 1).then((response) => {
             if (!response.error) {
                 setMovies(response.data);
             }
+            setLoading(false);
         });
     }, []);
 
@@ -25,22 +28,34 @@ export default function ComingSoon() {
             </div>
 
             <div className="row row-cols-2 row-cols-md-4 g-3 g-md-4">
-                {movies.slice(0, 4).map((movie, index) => (
-                    <div key={index} className="col">
-                        <Link to={`/movie/${movie.id}`} className="text-decoration-none">
-                            <div className="movie-card group">
-                                <div className="poster-wrapper mb-3">
-                                    <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} className="poster-img" alt={movie.original_title} />
-                                    <div className="overlay"></div>
-                                    <div className="position-absolute bottom-0 start-0 m-3">
-                                        <span className="date-badge">{movie.release_date}</span>
-                                    </div>
-                                </div>
-                                <h4 className="h6 fw-bold text-white text-truncate mb-0">{movie.original_title}</h4>
+                {loading ? (
+                    // Skeleton Loading
+                    [...Array(4)].map((_, index) => (
+                        <div key={index} className="col">
+                            <div className="movie-card">
+                                <div className="skeleton mb-3" style={{ aspectRatio: '2/3', width: '100%', borderRadius: '0.5rem' }}></div>
+                                <div className="skeleton ml-n2" style={{ height: '20px', width: '70%', borderRadius: '4px' }}></div>
                             </div>
-                        </Link>
-                    </div>
-                ))}
+                        </div>
+                    ))
+                ) : (
+                    movies.slice(0, 4).map((movie, index) => (
+                        <div key={index} className="col">
+                            <Link to={`/movie/${movie.id}`} className="text-decoration-none">
+                                <div className="movie-card group">
+                                    <div className="poster-wrapper mb-3">
+                                        <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} className="poster-img" alt={movie.original_title} />
+                                        <div className="overlay"></div>
+                                        <div className="position-absolute bottom-0 start-0 m-3">
+                                            <span className="date-badge">{movie.release_date}</span>
+                                        </div>
+                                    </div>
+                                    <h4 className="h6 fw-bold text-white text-truncate mb-0">{movie.original_title}</h4>
+                                </div>
+                            </Link>
+                        </div>
+                    ))
+                )}
             </div>
         </section>
     );
