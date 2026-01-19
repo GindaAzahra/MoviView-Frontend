@@ -8,10 +8,9 @@ export default async function handler(req, res) {
       method: req.method,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': req.headers.accept || '*/*',
-        // TRIK: Berpura-pura berasal dari domain itu sendiri
+        'Accept': 'application/json, text/plain, */*',
+        'X-Requested-With': 'XMLHttpRequest', // Trik untuk bypass beberapa firewall
         'Referer': 'http://moviview.infinityfreeapp.com/',
-        'Origin': 'http://moviview.infinityfreeapp.com',
       },
     };
 
@@ -28,35 +27,35 @@ export default async function handler(req, res) {
     }
 
     const response = await fetch(targetUrl, options);
-    const contentType = response.headers.get('content-type');
     
-    if (contentType) res.setHeader('Content-Type', contentType);
+    // Copy headers penting
+    const contentType = response.headers.get('content-type');
     const contentDisposition = response.headers.get('content-disposition');
+    if (contentType) res.setHeader('Content-Type', contentType);
     if (contentDisposition) res.setHeader('Content-Disposition', contentDisposition);
 
     const buffer = await response.arrayBuffer();
     const nodeBuffer = Buffer.from(buffer);
+    const textContent = nodeBuffer.toString();
 
-    // Jika kena blokir (HTML), berikan info lebih detail
-    if (contentType && contentType.includes('text/html')) {
-        const text = nodeBuffer.toString();
-        if (text.includes('__test')) {
-            return res.status(403).json({
-                error: true,
-                message: "Blokir InfinityFree Aktif",
-                info: "Proxy Vercel sudah bekerja, tapi InfinityFree menolak koneksi dari Server.",
-                solusi: "Silakan buka URL backend Anda satu kali di browser ini agar browser mendapatkan cookie izin, lalu refresh website Vercel."
-            });
-        }
+    // Cek apakah kena blokir InfinityFree
+    if (textContent.includes('__test') || textContent.includes('Checking your browser')) {
+      return res.status(403).json({
+        error: true,
+        message: "Blokir InfinityFree (Anti-Bot) Terdeteksi.",
+        debug: "Server Vercel gagal menembus firewall InfinityFree.",
+        saran: "Buka website http://moviview.infinityfreeapp.com di tab baru, lalu refresh halaman Vercel ini."
+      });
     }
 
+    // Jika JSON, kirim JSON
     if (contentType && contentType.includes('application/json')) {
       try {
-        const json = JSON.parse(nodeBuffer.toString());
-        return res.status(response.status).json(json);
+        return res.status(response.status).json(JSON.parse(textContent));
       } catch (e) {}
     }
 
+    // Kirim sisanya (PDF/Excel/HTML)
     res.status(response.status).send(nodeBuffer);
 
   } catch (error) {
