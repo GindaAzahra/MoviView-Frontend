@@ -10,7 +10,7 @@ export default function MovieHero({ movie }) {
             <div
                 className="position-absolute w-100 h-100 start-0 top-0"
                 style={{
-                    backgroundImage: `url('${movie.backdrop_path}')`,
+                    backgroundImage: `url('https://image.tmdb.org/t/p/w500${movie.backdrop_path}')`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat'
@@ -33,7 +33,7 @@ export default function MovieHero({ movie }) {
                     {/* Poster */}
                     <div className="d-none d-md-block flex-shrink-0 bg-dark rounded-3 overflow-hidden shadow-lg border border-warning border-opacity-50" style={{ width: '256px', aspectRatio: '2/3' }}>
                         <img
-                            src={movie.poster_path}
+                            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                             alt={`${movie.original_title} Poster`}
                             className="w-100 h-100 object-fit-cover"
                         />

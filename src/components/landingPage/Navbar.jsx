@@ -25,8 +25,7 @@ export default function Navbar() {
                     setUser(null);                  
                 }
                  toast.success("Logout berhasil!");
-        window.location.reload(); 
-        
+        window.location.href = '/'; 
     };
 
     return (

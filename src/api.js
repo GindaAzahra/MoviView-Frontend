@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8000/api";
+const BASE_URL = "/api";
 const TMDB_IMG = "https://image.tmdb.org/t/p/w500";
 
 function getAccessToken() {
@@ -45,6 +45,8 @@ async function login({email, password}) {
             password,
         }),
     });
+
+
     const responseJson = await response.json();
     if (responseJson.status !== "success") {
         return {error: true, data: null, message: responseJson.message};
@@ -92,6 +94,7 @@ async function getAllMovies(type, numberPage) {
         return {error: true, data: null};
     }
 
+    console.log(responseJson);
     return {
         error: false,
         data: responseJson.data,

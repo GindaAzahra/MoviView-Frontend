@@ -335,6 +335,7 @@ body {
   background-color: rgba(18, 18, 18, 0.8) !important;
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
 
 /* Skeleton Loading */
 @keyframes skeleton-loading {
@@ -349,5 +350,4 @@ body {
 .skeleton {
   animation: skeleton-loading 1s linear infinite alternate !important;
   background-color: rgba(255, 255, 255, 0.1) !important;
-}
 }

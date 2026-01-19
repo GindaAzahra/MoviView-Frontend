@@ -8,6 +8,8 @@ export default function RegisterForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [password_confirmation, setpassword_confirmation ] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const navigate = useNavigate();
 
     const onRegisterHandler = async (event) => {
@@ -80,13 +82,22 @@ export default function RegisterForm() {
                         <div className="position-relative">
                             <span className="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50">lock</span>
                             <input
-                                type="password"
-                                className="form-control bg-input-custom ps-5 h-14 rounded-3"
+                                type={showPassword ? "text" : "password"}
+                                className="form-control bg-input-custom ps-5 pe-5 h-14 rounded-3"
                                 placeholder="Min. 8 karakter"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
+                            <button 
+                                type="button" 
+                                className="btn position-absolute top-50 end-0 translate-middle-y text-white-50 hover-primary pe-3 border-0"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                <span className="material-symbols-outlined">
+                                    {showPassword ? 'visibility_off' : 'visibility'}
+                                </span>
+                            </button>
                         </div>
                     </div>
 
@@ -96,13 +107,22 @@ export default function RegisterForm() {
                         <div className="position-relative">
                             <span className="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50">shield_lock</span>
                             <input
-                                type="password"
-                                className="form-control bg-input-custom ps-5 h-14 rounded-3"
+                                type={showConfirmPassword ? "text" : "password"}
+                                className="form-control bg-input-custom ps-5 pe-5 h-14 rounded-3"
                                 placeholder="Ulangi password"
                                 value={password_confirmation}
                                 onChange={(e) => setpassword_confirmation(e.target.value)}
                                 required
                             />
+                            <button 
+                                type="button" 
+                                className="btn position-absolute top-50 end-0 translate-middle-y text-white-50 hover-primary pe-3 border-0"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            >
+                                <span className="material-symbols-outlined">
+                                    {showConfirmPassword ? 'visibility_off' : 'visibility'}
+                                </span>
+                            </button>
                         </div>
                     </div>
 

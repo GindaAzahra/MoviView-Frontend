@@ -334,7 +334,7 @@ export default function ReviewSection({ movieId }) {
                                             </div>
                                             {currentUser && currentUser.id_user === review.id_user && editingReviewId !== review.id_review && (
                                                 <div className="d-flex gap-2">
-                                                    <p>{review.id_user}</p>
+                                            
                                                     <button 
                                                         onClick={() => startEditing(review)}
                                                         className="btn btn-sm btn-outline-info d-flex align-items-center gap-1 py-1 px-2 border-opacity-25"

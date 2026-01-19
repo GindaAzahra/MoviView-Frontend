@@ -9,6 +9,7 @@ import MovieGrid from './pages/grid/MovieGrid';
 import Profile from './pages/Profile';
 import './assets/App.css';
 import ReviewsTable from "./pages/admin/ReviewsTable.jsx";
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
     return (
@@ -22,8 +23,16 @@ function App() {
                 <Route path="/movies" element={<MovieGrid/>}/>
                 <Route path="/profile" element={<Profile />} />
 
-                <Route path="/admin" element={<AdminDashboard title="Dashboard" />} />
-                <Route path="/movie-reviews" element={<AdminDashboard title="Movie Reviews"><ReviewsTable /></AdminDashboard>} />
+                <Route path="/admin" element={
+                    <ProtectedRoute>
+                        <AdminDashboard title="Dashboard" />
+                    </ProtectedRoute>
+                } />
+                <Route path="/movie-reviews" element={
+                    <ProtectedRoute>
+                        <AdminDashboard title="Movie Reviews"><ReviewsTable /></AdminDashboard>
+                    </ProtectedRoute>
+                } />
             </Routes>
         </>
     );

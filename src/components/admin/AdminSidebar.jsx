@@ -26,8 +26,7 @@ export default function AdminSidebar() {
                   setUser(null);
               }
                toast.success("Logout berhasil!");
-      window.location.reload();
-
+      window.location.href = '/';
   };
 
   const isActive = (to) => location.pathname === to;
