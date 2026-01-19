@@ -7,8 +7,8 @@ export default async function handler(req, res) {
     const options = {
       method: req.method,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-        'Accept': req.headers.accept || 'application/json',
+        'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+        'Accept': req.headers.accept || '*/*',
       },
     };
 

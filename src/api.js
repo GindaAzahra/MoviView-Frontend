@@ -272,13 +272,14 @@ async function exportReviews(type, movieIds = []) {
     );
 
     if (!response.ok) {
-        // Laravel will typically send JSON on error
-        let message = "Failed to export reviews.";
+        let message = `Export failed (Status: ${response.status})`;
         try {
             const j = await response.json();
             message = j?.message || message;
-        } catch {
-            // ignore
+        } catch (e) {
+            // If it's not JSON, it might be the Anti-Bot HTML
+            const text = await response.text().catch(() => "");
+            if (text.includes("__test")) message = "Blocked by InfinityFree Anti-Bot. Please open the site directly first.";
         }
         return {error: true, data: null, message};
     }
