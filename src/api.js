@@ -3,18 +3,21 @@ const BASE_URL = "/api";
 const TMDB_IMG = "https://image.tmdb.org/t/p/w500";
 
 async function safeJson(response) {
-    const text = await response.text();
-    
-    // Check for InfinityFree anti-bot first
-    if (text.includes("__test") || text.includes("Checking your browser")) {
-        return { status: "error", message: "InfinityFree Anti-Bot detected. Please visit the site directly and refresh." };
-    }
-
     try {
-        return JSON.parse(text);
+        const text = await response.text();
+        
+        // Skip leading garbage (like '\') by finding the first '{'
+        const firstBrace = text.indexOf('{');
+        const cleanedText = firstBrace !== -1 ? text.substring(firstBrace) : text.trim();
+        
+        if (cleanedText.includes("__test") || cleanedText.includes("Checking your browser")) {
+            return { status: "error", message: "InfinityFree Anti-Bot detected. Please visit the site directly and refresh." };
+        }
+
+        return JSON.parse(cleanedText);
     } catch (e) {
-        console.error("JSON Parse Error:", e, "Original text:", text);
-        return { status: "error", message: `Server returned invalid JSON: ${text.substring(0, 100)}...` };
+        console.error("JSON Parse Error:", e);
+        return { status: "error", message: "Received invalid data from server." };
     }
 }
 
@@ -290,13 +293,20 @@ async function exportReviews(type, movieIds = []) {
 
     if (!response.ok) {
         let message = `Export failed (Status: ${response.status})`;
-        try {
-            const j = await response.json();
-            message = j?.message || message;
-        } catch (e) {
-            // If it's not JSON, it might be the Anti-Bot HTML
-            const text = await response.text().catch(() => "");
-            if (text.includes("__test")) message = "Blocked by InfinityFree Anti-Bot. Please open the site directly first.";
+        const text = await response.text().catch(() => "");
+        
+        if (text.includes("__test") || text.includes("Checking your browser")) {
+            message = "Blocked by InfinityFree Anti-Bot. Please open the site directly once.";
+        } else {
+            try {
+                // Find first '{' to ignore leading garbage like a stray backslash
+                const firstBrace = text.indexOf('{');
+                const cleanedText = firstBrace !== -1 ? text.substring(firstBrace) : text;
+                const j = JSON.parse(cleanedText);
+                message = j?.message || message;
+            } catch (e) {
+                // Not JSON, use default status message
+            }
         }
         return {error: true, data: null, message};
     }
