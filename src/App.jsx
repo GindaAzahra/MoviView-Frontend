@@ -20,24 +20,10 @@ function App() {
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>
                 
-                {/* User Only Routes (Admin will be redirected to /movie-reviews) */}
-                <Route path="/movie/:id" element={
-                    <ProtectedRoute adminOnly={false}>
-                        <MovieDetail/>
-                    </ProtectedRoute>
-                }/>
-                <Route path="/movies" element={
-                    <ProtectedRoute adminOnly={false}>
-                        <MovieGrid/>
-                    </ProtectedRoute>
-                }/>
-                <Route path="/profile" element={
-                    <ProtectedRoute adminOnly={false}>
-                        <Profile />
-                    </ProtectedRoute>
-                } />
+                <Route path="/movie/:id" element={<MovieDetail/>}/>
+                <Route path="/movies" element={<MovieGrid/>}/>
+                <Route path="/profile" element={<Profile />} />
 
-                {/* Admin Only Routes (User will be redirected to /) */}
                 <Route path="/admin" element={
                     <ProtectedRoute adminOnly={true}>
                         <AdminDashboard title="Dashboard" />
