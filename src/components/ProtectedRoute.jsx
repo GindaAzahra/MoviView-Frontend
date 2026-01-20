@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { getAccessToken, getUserLogged } from '../api';
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, adminOnly = true }) => {
     const [isLoading, setIsLoading] = useState(true);
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [user, setUser] = useState(null);
     const token = getAccessToken();
 
     useEffect(() => {
@@ -16,8 +16,8 @@ const ProtectedRoute = ({ children }) => {
 
             try {
                 const { error, data } = await getUserLogged();
-                if (!error && data.is_admin === 1) {
-                    setIsAdmin(true);
+                if (!error) {
+                    setUser(data);
                 }
             } catch (err) {
                 console.error("Auth check failed", err);
@@ -39,8 +39,19 @@ const ProtectedRoute = ({ children }) => {
         );
     }
 
-    if (!token || !isAdmin) {
+    if (!token) {
+        return <Navigate to="/login" replace />;
+    }
+
+    // Role-based filtering
+    if (adminOnly && user?.is_admin !== 1) {
+        // Non-admin trying to access admin pages -> redirect to home
         return <Navigate to="/" replace />;
+    }
+
+    if (!adminOnly && user?.is_admin === 1) {
+        // Admin trying to access user pages (profile, movies, etc) -> redirect to admin dashboard
+        return <Navigate to="/movie-reviews" replace />;
     }
 
     return children;

@@ -5,16 +5,11 @@ const TMDB_IMG = "https://image.tmdb.org/t/p/w500";
 async function safeJson(response) {
     try {
         const text = await response.text();
-        
-        // Skip leading garbage (like '\') by finding the first '{'
-        const firstBrace = text.indexOf('{');
-        const cleanedText = firstBrace !== -1 ? text.substring(firstBrace) : text.trim();
-        
-        if (cleanedText.includes("__test") || cleanedText.includes("Checking your browser")) {
+        // InfinityFree Anti-Bot check (just in case)
+        if (text.includes("__test") || text.includes("Checking your browser")) {
             return { status: "error", message: "InfinityFree Anti-Bot detected. Please visit the site directly and refresh." };
         }
-
-        return JSON.parse(cleanedText);
+        return JSON.parse(text);
     } catch (e) {
         console.error("JSON Parse Error:", e);
         return { status: "error", message: "Received invalid data from server." };
@@ -44,7 +39,6 @@ async function register({name, email, password, password_confirmation}) {
             email,
             password,
             password_confirmation
-
         }),
     });
     const responseJson = await safeJson(response);
@@ -65,7 +59,6 @@ async function login({email, password}) {
             password,
         }),
     });
-
 
     const responseJson = await safeJson(response);
     if (responseJson.status !== "success") {
@@ -106,7 +99,6 @@ async function logoutUser() {
     return {error: false, data: responseJson.data};
 }
 
-
 async function getAllMovies(type, numberPage) {
     const response = await fetch(`${BASE_URL}/movies/${type}?page=${numberPage}`, {});
     const responseJson = await safeJson(response);
@@ -114,7 +106,6 @@ async function getAllMovies(type, numberPage) {
         return {error: true, data: null};
     }
 
-    console.log(responseJson);
     return {
         error: false,
         data: responseJson.data,
@@ -122,7 +113,6 @@ async function getAllMovies(type, numberPage) {
         current_page: responseJson.current_page
     };
 }
-
 
 async function getMovieById(id) {
     const response = await fetch(`${BASE_URL}/movie/${id}`);
@@ -132,7 +122,6 @@ async function getMovieById(id) {
     }
     return {error: false, data: responseJson.data};
 }
-
 
 async function submitReview({id_movie, rating, review}) {
     const response = await fetch(`${BASE_URL}/reviews`, {
@@ -157,7 +146,6 @@ async function submitReview({id_movie, rating, review}) {
     return {error: false, data: responseJson.data};
 }
 
-
 async function getReviewsByMovieId(movieId) {
     const response = await fetch(`${BASE_URL}/reviews/movie/${movieId}`);
     const responseJson = await safeJson(response);
@@ -168,7 +156,6 @@ async function getReviewsByMovieId(movieId) {
 
     return {error: false, data: responseJson.data};
 }
-
 
 async function updateReview({id, id_movie, rating, review}) {
     const response = await fetch(`${BASE_URL}/reviews/${id}`, {
@@ -259,11 +246,8 @@ async function getAllReviews(page = 1) {
 
 function getFilenameFromContentDisposition(contentDisposition, fallback) {
     if (!contentDisposition) return fallback;
-
-    // handles: attachment; filename="file.xlsx"
     const match = /filename\*?=(?:UTF-8'')?("?)([^";]+)\1/i.exec(contentDisposition);
     if (!match) return fallback;
-
     try {
         return decodeURIComponent(match[2]);
     } catch {
@@ -273,12 +257,7 @@ function getFilenameFromContentDisposition(contentDisposition, fallback) {
 
 async function exportReviews(type, movieIds = []) {
     const normalizedType = String(type || "").toLowerCase();
-    if (normalizedType !== "excel" && normalizedType !== "pdf") {
-        return {error: true, data: null, message: "Invalid export type."};
-    }
-
     const qs = new URLSearchParams();
-    // optional filter: ?id_movie=1&id_movie=2 ...
     if (movieIds?.length) movieIds.forEach((id) => qs.append("id_movie", String(id)));
 
     const response = await fetch(
@@ -294,26 +273,15 @@ async function exportReviews(type, movieIds = []) {
     if (!response.ok) {
         let message = `Export failed (Status: ${response.status})`;
         const text = await response.text().catch(() => "");
-        
-        if (text.includes("__test") || text.includes("Checking your browser")) {
-            message = "Blocked by InfinityFree Anti-Bot. Please open the site directly once.";
-        } else {
-            try {
-                // Find first '{' to ignore leading garbage like a stray backslash
-                const firstBrace = text.indexOf('{');
-                const cleanedText = firstBrace !== -1 ? text.substring(firstBrace) : text;
-                const j = JSON.parse(cleanedText);
-                message = j?.message || message;
-            } catch (e) {
-                // Not JSON, use default status message
-            }
-        }
+        try {
+            const j = JSON.parse(text);
+            message = j?.message || message;
+        } catch (e) {}
         return {error: true, data: null, message};
     }
 
     const blob = await response.blob();
-    const suggested =
-        normalizedType === "excel" ? "reviews.xlsx" : "reviews.pdf";
+    const suggested = normalizedType === "excel" ? "reviews.xlsx" : "reviews.pdf";
     const filename = getFilenameFromContentDisposition(
         response.headers.get("content-disposition"),
         suggested

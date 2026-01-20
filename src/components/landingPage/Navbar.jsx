@@ -55,7 +55,13 @@ export default function Navbar() {
                                 {user.name}
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end bg-dark border-secondary">
-                                <li><Link to="/profile" className="dropdown-item text-white hover-primary">Profil</Link></li>
+                                <li>
+                                    {user.is_admin === 1 ? (
+                                        <Link to="/movie-reviews" className="dropdown-item text-white hover-primary">Movie Reviews</Link>
+                                    ) : (
+                                        <Link to="/profile" className="dropdown-item text-white hover-primary">Profil</Link>
+                                    )}
+                                </li>
                                 <li><button className="dropdown-item text-white hover-primary" onClick={logout}>Keluar</button></li>
                             </ul>
                         </div>
