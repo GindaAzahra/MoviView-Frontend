@@ -3,22 +3,19 @@ const BASE_URL = "/api";
 const TMDB_IMG = "https://image.tmdb.org/t/p/w500";
 
 async function safeJson(response) {
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-        try {
-            return await response.json();
-        } catch (e) {
-            console.error("JSON Parse Error:", e);
-        }
-    }
-    
-    // Fallback if not JSON (could be InfinityFree's HTML challenge)
     const text = await response.text();
+    
+    // Check for InfinityFree anti-bot first
     if (text.includes("__test") || text.includes("Checking your browser")) {
         return { status: "error", message: "InfinityFree Anti-Bot detected. Please visit the site directly and refresh." };
     }
-    
-    return { status: "error", message: "Received non-JSON response from server." };
+
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        console.error("JSON Parse Error:", e, "Original text:", text);
+        return { status: "error", message: `Server returned invalid JSON: ${text.substring(0, 100)}...` };
+    }
 }
 
 function getAccessToken() {
