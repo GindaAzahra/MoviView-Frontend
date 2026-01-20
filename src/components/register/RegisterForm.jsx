@@ -124,6 +124,9 @@ export default function RegisterForm() {
                                 </span>
                             </button>
                         </div>
+                        <p className="text-white-50 mt-2 mb-0" style={{ fontSize: '11px' }}>
+                            * Password harus ada 1 huruf besar, 1 angka, dan 1 simbol.
+                        </p>
                     </div>
 
                     {/* Submit Button */}
