@@ -7,13 +7,13 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://moviview.infinityfreeapp.com',
+        target: 'http://moviview.infinityfreeapp.com',
         changeOrigin: true,
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+          'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
           'Accept': 'application/json, text/plain, */*',
           'X-Requested-With': 'XMLHttpRequest',
-          'Referer': 'https://moviview.infinityfreeapp.com/',
+          'Referer': 'http://moviview.infinityfreeapp.com/',
         }
       }
     }

@@ -1,5 +1,25 @@
+
 const BASE_URL = "/api";
 const TMDB_IMG = "https://image.tmdb.org/t/p/w500";
+
+async function safeJson(response) {
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+        try {
+            return await response.json();
+        } catch (e) {
+            console.error("JSON Parse Error:", e);
+        }
+    }
+    
+    // Fallback if not JSON (could be InfinityFree's HTML challenge)
+    const text = await response.text();
+    if (text.includes("__test") || text.includes("Checking your browser")) {
+        return { status: "error", message: "InfinityFree Anti-Bot detected. Please visit the site directly and refresh." };
+    }
+    
+    return { status: "error", message: "Received non-JSON response from server." };
+}
 
 function getAccessToken() {
     return localStorage.getItem("accessTokenMoviView");
@@ -27,7 +47,7 @@ async function register({name, email, password, password_confirmation}) {
 
         }),
     });
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
     if (responseJson.status !== "success") {
         return {error: true, message: responseJson.message};
     }
@@ -47,7 +67,7 @@ async function login({email, password}) {
     });
 
 
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
     if (responseJson.status !== "success") {
         return {error: true, data: null, message: responseJson.message};
     }
@@ -60,7 +80,7 @@ async function getUserLogged() {
             Authorization: `Bearer ${getAccessToken()}`,
         },
     });
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
 
     if (responseJson.status !== "success") {
         return {error: true, data: null};
@@ -76,7 +96,7 @@ async function logoutUser() {
             Authorization: `Bearer ${getAccessToken()}`,
         },
     });
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
 
     if (responseJson.status !== "success") {
         return {error: true, data: null};
@@ -89,7 +109,7 @@ async function logoutUser() {
 
 async function getAllMovies(type, numberPage) {
     const response = await fetch(`${BASE_URL}/movies/${type}?page=${numberPage}`, {});
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
     if (responseJson.status !== "success") {
         return {error: true, data: null};
     }
@@ -106,7 +126,7 @@ async function getAllMovies(type, numberPage) {
 
 async function getMovieById(id) {
     const response = await fetch(`${BASE_URL}/movie/${id}`);
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
     if (responseJson.status !== "success") {
         return {error: true, data: null};
     }
@@ -128,7 +148,7 @@ async function submitReview({id_movie, rating, review}) {
             review,
         }),
     });
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
 
     if (responseJson.status !== "success") {
         return {error: true, message: responseJson.message};
@@ -140,7 +160,7 @@ async function submitReview({id_movie, rating, review}) {
 
 async function getReviewsByMovieId(movieId) {
     const response = await fetch(`${BASE_URL}/reviews/movie/${movieId}`);
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
 
     if (responseJson.status !== "success") {
         return {error: true, data: []};
@@ -164,7 +184,7 @@ async function updateReview({id, id_movie, rating, review}) {
             review,
         }),
     });
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
 
     if (responseJson.status !== "success") {
         return {error: true, message: responseJson.message};
@@ -180,7 +200,7 @@ async function deleteReview(id) {
             Authorization: `Bearer ${getAccessToken()}`,
         },
     });
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
 
     if (responseJson.status !== "success") {
         return {error: true, message: responseJson.message};
@@ -195,7 +215,7 @@ async function getMyReviews() {
             Authorization: `Bearer ${getAccessToken()}`,
         },
     });
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
 
     if (responseJson.status !== "success") {
         return {error: true, data: []};
@@ -206,7 +226,7 @@ async function getMyReviews() {
 
 async function searchMovies(query) {
     const response = await fetch(`${BASE_URL}/movies/search?q=${query}`);
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
     if (responseJson.status !== "success") {
         return {error: true, data: null};
     }
@@ -222,7 +242,7 @@ async function getAllReviews(page = 1) {
         },
     });
 
-    const responseJson = await response.json();
+    const responseJson = await safeJson(response);
 
     if (responseJson.status !== "success") {
         return {error: true, data: null, message: responseJson.message};
