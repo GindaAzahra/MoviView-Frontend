@@ -7,7 +7,7 @@
   --cine-accent-dark: #171611;
   --cine-input-bg: #26241c;
   --cine-card-dark: #252525; /* New color from user request */
-  --cine-muted-gray: #A0A0A0; /* New color */
+  --cine-muted-gray: #a0a0a0; /* New color */
 
   /* Admin Dashboard Colors */
   --admin-bg: #121212;
@@ -47,16 +47,16 @@ body {
 
 /* New Grid Page Utilities */
 .bg-card-dark {
-    background-color: var(--cine-card-dark);
+  background-color: var(--cine-card-dark);
 }
 .text-muted-gray {
-    color: var(--cine-muted-gray);
+  color: var(--cine-muted-gray);
 }
 .hover-bg-white-5:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 .hover-bg-white-10:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Buttons */
@@ -131,7 +131,8 @@ body {
 /* Hero */
 .hero-bg {
   /* Note: URL handled in inline style or class modification if needed, but keeping default here */
-  background-image: linear-gradient(
+  background-image:
+    linear-gradient(
       rgba(26, 26, 26, 0.8),
       rgba(26, 26, 26, 0.5),
       rgba(26, 26, 26, 0.9)
@@ -224,11 +225,14 @@ body {
 
 /* Footer */
 .film-strip-border {
-  background-image: linear-gradient(90deg, #eedc81 50%, transparent 50%),
+  background-image:
+    linear-gradient(90deg, #eedc81 50%, transparent 50%),
     linear-gradient(90deg, #eedc81 50%, transparent 50%);
   background-repeat: repeat-x;
   background-size: 20px 10px;
-  background-position: 0 0, 0 100%;
+  background-position:
+    0 0,
+    0 100%;
   border-top: 8px solid var(--cine-primary);
 }
 
@@ -350,4 +354,58 @@ body {
 .skeleton {
   animation: skeleton-loading 1s linear infinite alternate !important;
   background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* RESPONSIVE ADMIN LAYOUT */
+.admin-content-wrapper {
+  margin-left: 280px;
+  transition: margin-left 0.3s ease;
+  width: calc(100% - 280px);
+}
+
+.admin-sidebar-container {
+  width: 280px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1050;
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 991.98px) {
+  .admin-content-wrapper {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .admin-sidebar-container {
+    transform: translateX(-100%);
+  }
+
+  .admin-sidebar-container.show {
+    transform: translateX(0);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .admin-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1045;
+    display: none;
+  }
+
+  .admin-sidebar-overlay.show {
+    display: block;
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.transition {
+  transition: all 0.3s ease;
 }

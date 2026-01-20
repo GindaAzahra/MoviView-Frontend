@@ -1,6 +1,7 @@
 import { submitReview, getAccessToken, getReviewsByMovieId, getUserLogged, deleteReview, updateReview } from '../../api';
 import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function ReviewSection({ movieId }) {
     const [rating, setRating] = useState(0);
@@ -219,50 +220,57 @@ export default function ReviewSection({ movieId }) {
                     <div className="sticky-top" style={{ top: '2rem', zIndex: 1 }}>
                         <h2 className="h4 fw-bold text-white mb-4">Bagikan Pendapatmu</h2>
                         <div className="bg-surface p-4 rounded-3 border border-white border-opacity-10 shadow-lg">
-                            <form onSubmit={handleSubmit} className="d-flex flex-column gap-4">
-                                <div>
-                                    <label className="text-white-50 small fw-bold text-uppercase mb-2" style={{ letterSpacing: '0.1em' }}>Beri Rating</label>
-                                    <div className="d-flex gap-2">
-                                        {[1, 2, 3, 4, 5].map((star) => (
-                                            <span 
-                                                key={star} 
-                                                className={`material-symbols-outlined fs-3 cursor-pointer hover-scale ${
-                                                    star <= displayRating ? 'text-primary-custom filled-icon' : 'text-white-50'
-                                                }`}
-                                                onClick={() => handleStarClick(star)}
-                                                onMouseEnter={() => handleStarHover(star)}
-                                                onMouseLeave={handleStarLeave}
-                                                style={{ cursor: 'pointer' }}
-                                            >
-                                                star
-                                            </span>
-                                        ))}
+                            {getAccessToken() ? (
+                                <form onSubmit={handleSubmit} className="d-flex flex-column gap-4">
+                                    <div>
+                                        <label className="text-white-50 small fw-bold text-uppercase mb-2" style={{ letterSpacing: '0.1em' }}>Beri Rating</label>
+                                        <div className="d-flex gap-2">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <span 
+                                                    key={star} 
+                                                    className={`material-symbols-outlined fs-3 cursor-pointer hover-scale ${
+                                                        star <= displayRating ? 'text-primary-custom filled-icon' : 'text-white-50'
+                                                    }`}
+                                                    onClick={() => handleStarClick(star)}
+                                                    onMouseEnter={() => handleStarHover(star)}
+                                                    onMouseLeave={handleStarLeave}
+                                                    style={{ cursor: 'pointer' }}
+                                                >
+                                                    star
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div>
-                                    <label className="text-white-50 small fw-bold text-uppercase mb-2" style={{ letterSpacing: '0.1em' }}>Ulasan Anda</label>
-                                    <textarea
-                                        className="form-control bg-white bg-opacity-10 border-white border-opacity-10 text-white placeholder-white-50"
-                                        rows="6"
-                                        placeholder="Tulis ulasanmu di sini..."
-                                        value={reviewText}
-                                        onChange={(e) => setReviewText(e.target.value)}
+                                    <div>
+                                        <label className="text-white-50 small fw-bold text-uppercase mb-2" style={{ letterSpacing: '0.1em' }}>Ulasan Anda</label>
+                                        <textarea
+                                            className="form-control bg-white bg-opacity-10 border-white border-opacity-10 text-white placeholder-white-50"
+                                            rows="6"
+                                            placeholder="Tulis ulasanmu di sini..."
+                                            value={reviewText}
+                                            onChange={(e) => setReviewText(e.target.value)}
+                                            disabled={isSubmitting}
+                                        ></textarea>
+                                    </div>
+
+                                    <button 
+                                        type="submit"
+                                        className="btn btn-primary-custom w-100 py-3 fw-bold small text-uppercase" 
+                                        style={{ letterSpacing: '0.1em' }}
                                         disabled={isSubmitting}
-                                    ></textarea>
+                                    >
+                                        {isSubmitting ? 'Mengirim...' : 'Posting Ulasan'}
+                                    </button>
+                                </form>
+                            ) : (
+                                <div className="text-center py-4">
+                                    <span className="material-symbols-outlined fs-1 text-white-50 mb-3">lock</span>
+                                    <h5 className="text-white fw-bold mb-3">Ingin memberi ulasan?</h5>
+                                    <p className="text-white-50 small mb-4">Silakan masuk ke akun Anda terlebih dahulu untuk berbagi pendapat.</p>
+                                    <Link to="/login" className="btn btn-primary-custom w-100 py-3 fw-bold small text-uppercase">Masuk Sekarang</Link>
                                 </div>
-
-
-
-                                <button 
-                                    type="submit"
-                                    className="btn btn-primary-custom w-100 py-3 fw-bold small text-uppercase" 
-                                    style={{ letterSpacing: '0.1em' }}
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? 'Mengirim...' : 'Posting Ulasan'}
-                                </button>
-                            </form>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -3,7 +3,7 @@ import { getAccessToken, getUserLogged, logoutUser } from '../../api';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ isOpen }) {
   const [user, setUser] = useState(null);
   const location = useLocation();
 
@@ -32,19 +32,18 @@ export default function AdminSidebar() {
   const isActive = (to) => location.pathname === to;
 
   return (
-    <aside className="d-flex flex-column flex-shrink-0 p-3 bg-dark text-white border-end" style={{ width: '280px', height: '100vh', position: 'fixed' }}>
+    <aside className={`admin-sidebar-container d-flex flex-column flex-shrink-0 p-3 bg-dark text-white border-end ${isOpen ? 'show' : ''}`}>
       <Link to="/admin" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-light text-decoration-none gap-2">
         <div className="bg-primary text-white rounded d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>
           <span className="material-symbols-outlined">movie</span>
         </div>
         <div className="d-flex flex-column">
-          <span className="fs-5 fw-bold">Cine Hall</span>
+          <span className="fs-5 fw-bold">MoviView</span>
           <span className="text-white-50 text-uppercase" style={{ fontSize: '0.75rem' }}>Admin Panel</span>
         </div>
       </Link>
       <hr className="text-white-50" />
       <ul className="nav nav-pills flex-column gap-3 mb-auto">
-
         <li className="nav-item">
           <Link
             to="/movie-reviews"
@@ -59,12 +58,12 @@ export default function AdminSidebar() {
       <hr className="text-white-50" />
       <div className="dropdown">
         <a href="#" className="d-flex align-items-center link-light text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2hFyg_KrBsJPElmfWpjBC3O3wYJtwvOtnURkuQKP7RCVqTaUcSczfBRhM2EHdyQURrnrP8D1jKaQInpuBVjRJ28hkoEUac3dGmSKrNUZ3sXMzyoqh18NRsscpSlsTAdR0CBJNGPtcVYeKxl_ucZNA8lkC7rN7_MH06afVTHYMCtjpMJVRkfAJKdaa88A6YC2NyoUmNYn63Vk-U2qFH9zies8EHGL7FPMqCqwGieW3_eUCFwZOPSCxm3XRgBAHa7ATaiWQViuWwTY" alt="" width="32" height="32" className="rounded-circle me-2" />
-          <strong>{user?.name ?? 'Admin'}</strong>
+          <div className="bg-primary-custom bg-opacity-20 text-primary-custom rounded-circle d-flex align-items-center justify-content-center me-2" style={{ width: '32px', height: '32px' }}>
+            {user?.name?.substring(0, 1).toUpperCase() || 'A'}
+          </div>
+          <strong className="text-truncate" style={{ maxWidth: '150px' }}>{user?.name ?? 'Admin'}</strong>
         </a>
         <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser2">
-          <li><hr className="dropdown-divider" /></li>
-
           <li><button className="dropdown-item text-white hover-primary" onClick={logout}>Logout</button></li>
         </ul>
       </div>
