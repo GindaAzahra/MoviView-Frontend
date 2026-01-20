@@ -42,8 +42,14 @@ async function register({name, email, password, password_confirmation}) {
         }),
     });
     const responseJson = await safeJson(response);
+    
     if (responseJson.status !== "success") {
-        return {error: true, message: responseJson.message};
+        // Extract validation errors if they exist
+        if (responseJson.errors) {
+            const errorMessages = Object.values(responseJson.errors).flat().join(" ");
+            return {error: true, message: errorMessages};
+        }
+        return {error: true, message: responseJson.message || "Registrasi gagal."};
     }
     return responseJson;
 }
