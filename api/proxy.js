@@ -1,8 +1,8 @@
 
 export default async function handler(req, res) {
   const fullPath = req.url.replace(/^\/api/, '');
-  // Gunakan HTTPS karena seringkali HTTP diredirect dan memicu bot detection
-  const targetUrl = `https://moviview.infinityfreeapp.com/api${fullPath}`;
+  // Kadang InfinityFree lebih galak di HTTPS, coba balik ke http dulu
+  const targetUrl = `http://moviview.infinityfreeapp.com/api${fullPath}`;
 
   try {
     const headers = {
@@ -10,8 +10,8 @@ export default async function handler(req, res) {
       'Accept': 'application/json, text/plain, */*',
       'Accept-Language': 'en-US,en;q=0.9,id;q=0.8',
       'X-Requested-With': 'XMLHttpRequest',
-      'Referer': 'https://moviview.infinityfreeapp.com/',
-      'Origin': 'https://moviview.infinityfreeapp.com',
+      'Referer': 'http://moviview.infinityfreeapp.com/',
+      'Origin': 'http://moviview.infinityfreeapp.com',
       'Sec-Fetch-Dest': 'empty',
       'Sec-Fetch-Mode': 'cors',
       'Sec-Fetch-Site': 'same-origin',
@@ -19,22 +19,19 @@ export default async function handler(req, res) {
       'Pragma': 'no-cache',
     };
 
-    // Forward Authorization header
     if (req.headers.authorization) {
       headers['Authorization'] = req.headers.authorization;
     }
     
-    // Forward Content-Type
     if (req.headers['content-type']) {
       headers['Content-Type'] = req.headers['content-type'];
     }
 
-    // Forward existing Cookies from browser to InfinityFree
     if (req.headers.cookie) {
       headers['Cookie'] = req.headers.cookie;
     }
 
-    const options = {
+    let options = {
       method: req.method,
       headers: headers,
     };
@@ -44,59 +41,54 @@ export default async function handler(req, res) {
     }
 
     let response = await fetch(targetUrl, options);
-    
-    // Ambil body as buffer dulu supaya bisa dicek tanpa merusak stream
     let buffer = await response.arrayBuffer();
     let textContent = Buffer.from(buffer).toString();
 
-    // --- BYPASS INFINITYFREE ANTI-BOT ---
-    // Jika terdeteksi challenge document.cookie="__test=...", kita coba extract dan kirim ulang
-    if (textContent.includes('__test') && textContent.includes('document.cookie')) {
-      const cookieMatch = textContent.match(/document\.cookie\s*=\s*"(__test=[^;]+)/);
+    // --- BYPASS INFINITYFREE ANTI-BOT v2 ---
+    // Logika lebih agresif untuk mencari __test cookie
+    if (textContent.includes('__test') || textContent.includes('document.cookie')) {
+      const cookieMatch = textContent.match(/__test=([a-f0-9]+)/i);
       if (cookieMatch) {
-          const testCookie = cookieMatch[1];
-          headers['Cookie'] = (headers['Cookie'] ? headers['Cookie'] + '; ' : '') + testCookie;
+          const testCookieValue = cookieMatch[1];
+          const fullCookie = `__test=${testCookieValue}`;
           
-          // Beri tahu browser untuk simpan cookie ini juga supaya request berikutnya lancar
-          res.setHeader('Set-Cookie', `${testCookie}; Path=/; HttpOnly; SameSite=None; Secure`);
+          headers['Cookie'] = (headers['Cookie'] ? headers['Cookie'] + '; ' : '') + fullCookie;
           
-          // Retry request dengan cookie yang baru didapat
-          response = await fetch(targetUrl, options);
+          // Set cookie ke client browser juga agar request berikutnya lancar
+          res.setHeader('Set-Cookie', `${fullCookie}; Path=/; Max-Age=31536000; SameSite=Lax`);
+          
+          // Retry dengan cookie
+          response = await fetch(targetUrl, { ...options, headers });
           buffer = await response.arrayBuffer();
           textContent = Buffer.from(buffer).toString();
       }
     }
     // ------------------------------------
 
-    // Copy headers penting dari response target ke response kita
     const contentType = response.headers.get('content-type');
-    const contentDisposition = response.headers.get('content-disposition');
     const setCookie = response.headers.get('set-cookie');
+    const contentDisposition = response.headers.get('content-disposition');
 
     if (contentType) res.setHeader('Content-Type', contentType);
-    if (contentDisposition) res.setHeader('Content-Disposition', contentDisposition);
     if (setCookie) res.setHeader('Set-Cookie', setCookie);
+    if (contentDisposition) res.setHeader('Content-Disposition', contentDisposition);
 
-    // Cek apakah masih kena blokir setelah upaya bypass
+    // Kirim response
     if (textContent.includes('__test') || textContent.includes('Checking your browser')) {
-      return res.status(403).json({
-        error: true,
-        message: "Blokir InfinityFree (Anti-Bot) Terdeteksi.",
-        debug: "Server Vercel gagal menembus firewall InfinityFree meskipun sudah mencoba bypass.",
-        saran: "InfinityFree mendeteksi Vercel sebagai bot. Coba akses API langsung dari browser sekali saja, atau gunakan hosting backend lain (seperti Render/Railway) untuk folder backend Anda."
-      });
+       // Jika masih gagal tembus, paksa kirim HTML challenge-nya ke browser (Content-Type: text/html)
+       // Agar browser mengeksekusi JS challenge tersebut
+       res.setHeader('Content-Type', 'text/html');
+       return res.status(200).send(textContent);
     }
 
-    // Jika JSON, kirim JSON
     if (contentType && contentType.includes('application/json')) {
       try {
         return res.status(response.status).json(JSON.parse(textContent));
       } catch (e) {
-        // Fallback jika gagal parse
+        // Gagal parse JSON
       }
     }
 
-    // Kirim sisanya (PDF/Excel/HTML/Binary)
     res.status(response.status).send(Buffer.from(buffer));
 
   } catch (error) {
